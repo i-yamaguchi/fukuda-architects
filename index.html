@@ -59,21 +59,16 @@
             color: #000;
         }
 
-        /* メインビジュアル（スクロール切り替えエリア） */
+        /* メインビジュアル（スライドショーエリア） */
         .hero-section {
             position: relative;
-            width: 100%;
-            height: 200vh; /* スクロールスペースを確保 */
-        }
-        .hero-sticky {
-            position: sticky;
-            top: 0;
             width: 100vw;
-            height: 100vh;
+            height: calc(100vh - 70px);
+            margin-top: 70px;
             overflow: hidden;
         }
 
-        /* スライド（画像とテキストのセット） */
+        /* スライド */
         .slide {
             position: absolute;
             top: 0;
@@ -81,13 +76,15 @@
             width: 100%;
             height: 100%;
             opacity: 0;
-            transition: opacity 1s ease-in-out;
+            visibility: hidden;
+            transition: opacity 0.8s ease-in-out, visibility 0.8s ease-in-out;
             display: flex;
             justify-content: center;
             align-items: center;
         }
         .slide.active {
             opacity: 1;
+            visibility: visible;
         }
 
         /* 背景画像 */
@@ -101,7 +98,7 @@
             z-index: 1;
         }
 
-        /* 画像上の黒オーバーレイ（文字を読みやすくするため） */
+        /* 画像上の黒オーバーレイ */
         .slide::after {
             content: '';
             position: absolute;
@@ -109,7 +106,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.3);
+            background-color: rgba(0, 0, 0, 0.35);
             z-index: 2;
         }
 
@@ -129,11 +126,69 @@
             text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
+        /* --- 左右の切り替え矢印ボタン --- */
+        .slider-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s, transform 0.2s;
+            backdrop-filter: blur(4px);
+        }
+        .slider-btn:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+        .prev-btn {
+            left: 30px;
+        }
+        .next-btn {
+            right: 30px;
+        }
+
+        /* --- 下部インジケーター（直接指定アイコン） --- */
+        .slider-dots {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            display: flex;
+            gap: 12px;
+        }
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            border: none;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+        }
+        .dot.active {
+            background: #fff;
+            transform: scale(1.2);
+        }
+
         /* レスポンシブ対応（スマホ向け） */
         @media (max-width: 768px) {
             header {
                 padding: 0 20px;
                 height: 60px;
+            }
+            .hero-section {
+                height: calc(100vh - 60px);
+                margin-top: 60px;
             }
             .logo a {
                 font-size: 1rem;
@@ -145,7 +200,18 @@
                 font-size: 0.8rem;
             }
             .hero-text h1 {
-                font-size: 1.4rem;
+                font-size: 1.3rem;
+            }
+            .slider-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+            .prev-btn {
+                left: 15px;
+            }
+            .next-btn {
+                right: 15px;
             }
         }
     </style>
@@ -166,50 +232,97 @@
         </nav>
     </header>
 
-    <!-- メインセクション（スクロール連動切り替え） -->
-    <section class="hero-section" id="heroSection">
-        <div class="hero-sticky">
-            <!-- 1枚目のスライド -->
-            <div class="slide active" id="slide1">
-                <!-- サンプル画像（ご自身で用意した画像ファイル名に変更してください） -->
-                <img src="images/hero-1.jpg" alt="Fukuda Architects Project 1">
-                <div class="hero-text">
-                    <h1>光と影を編む、<br>静謐な建築空間。</h1>
-                </div>
+    <!-- メインセクション（4枚のスライドショー） -->
+    <section class="hero-section">
+        <!-- スライド1: hero-1 -->
+        <div class="slide active" data-index="0">
+            <img src="images/hero-1.jpg" alt="Fukuda Architects Project 1">
+            <div class="hero-text">
+                <h1>光と影を編む、<br>静謐な建築空間。</h1>
             </div>
+        </div>
 
-            <!-- 2枚目のスライド -->
-            <div class="slide" id="slide2">
-                <!-- サンプル画像（ご自身で用意した画像ファイル名に変更してください） -->
-                <img src="images/hero-2.jpg" alt="Fukuda Architects Project 2">
-                <div class="hero-text">
-                    <h1>風景と対話し、<br>時とともに深まるデザイン。</h1>
-                </div>
+        <!-- スライド2: 代表のポートレート -->
+        <div class="slide" data-index="1">
+            <img src="images/president.png" alt="代表者プロフィール">
+            <div class="hero-text">
+                <h1>想いをカタチに、<br>未来へ繋ぐ建築。</h1>
             </div>
+        </div>
+
+        <!-- スライド3: hero-2 （パターン3の文章適用） -->
+        <div class="slide" data-index="2">
+            <img src="images/hero-2.jpg" alt="Fukuda Architects Project 2">
+            <div class="hero-text">
+                <h1>無限の宇宙を内包した魂が、静かに、そして激しく爆ぜる。<br>私という超新星の閃光で、世界の美しさを再定義する。</h1>
+            </div>
+        </div>
+
+        <!-- スライド4: 代表の枠持ち画像 -->
+        <div class="slide" data-index="3">
+            <img src="images/president.png" alt="代表者 枠持ち写真">
+            <div class="hero-text">
+                <h1>自分で決めた限界の枠なんて、ぶち抜け。<br>既成概念の枠にも囚われない、唯一無二の建築を。</h1>
+            </div>
+        </div>
+
+        <!-- 左右の矢印ボタン -->
+        <button class="slider-btn prev-btn" id="prevBtn" aria-label="前のスライドへ">&#10094;</button>
+        <button class="slider-btn next-btn" id="nextBtn" aria-label="次のスライドへ">&#10095;</button>
+
+        <!-- 下部インジケーター（直接指定アイコン） -->
+        <div class="slider-dots" id="sliderDots">
+            <button class="dot active" data-index="0" aria-label="スライド1"></button>
+            <button class="dot" data-index="1" aria-label="スライド2"></button>
+            <button class="dot" data-index="2" aria-label="スライド3"></button>
+            <button class="dot" data-index="3" aria-label="スライド4"></button>
         </div>
     </section>
 
-    <!-- スクリプト：スクロール位置に応じて画像を切り替える -->
+    <!-- スクリプト：スライドショーのコントロール -->
     <script>
-        const section = document.getElementById('heroSection');
-        const slide1 = document.getElementById('slide1');
-        const slide2 = document.getElementById('slide2');
+        const slides = document.querySelectorAll('.slide');
+        const dots = document.querySelectorAll('.dot');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        let currentIndex = 0;
+        const totalSlides = slides.length;
 
-        window.addEventListener('scroll', () => {
-            const rect = section.getBoundingClientRect();
-            const sectionHeight = section.offsetHeight;
-            const windowHeight = window.innerHeight;
-
-            // スクロールが進んだ割合を計算 (0から1の間)
-            let scrollProgress = -rect.top / (sectionHeight - windowHeight);
-            
-            if (scrollProgress >= 0.5) {
-                slide1.classList.remove('active');
-                slide2.classList.add('active');
+        function showSlide(index) {
+            // インデックスのループ処理
+            if (index < 0) {
+                currentIndex = totalSlides - 1;
+            } else if (index >= totalSlides) {
+                currentIndex = 0;
             } else {
-                slide1.classList.add('active');
-                slide2.classList.remove('active');
+                currentIndex = index;
             }
+
+            // すべてのスライドとドットから active を外す
+            slides.forEach(slide => slide.classList.remove('active'));
+            dots.forEach(dot => dot.classList.remove('active'));
+
+            // 現在のインデックスに active を付与
+            slides[currentIndex].classList.add('active');
+            dots[currentIndex].classList.add('active');
+        }
+
+        // 次へボタン
+        nextBtn.addEventListener('click', () => {
+            showSlide(currentIndex + 1);
+        });
+
+        // 前へボタン
+        prevBtn.addEventListener('click', () => {
+            showSlide(currentIndex - 1);
+        });
+
+        // ドットクリックによる直接指定
+        dots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                const targetIndex = parseInt(dot.getAttribute('data-index'));
+                showSlide(targetIndex);
+            });
         });
     </script>
 </body>
