@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Fukuda Architects</title>
+    <style>
+        /* CSS リセット & 基本設定 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+            color: #333;
+            background-color: #fff;
+            overflow-x: hidden;
+        }
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* ヘッダー・ナビゲーションバー（全ページ共通） */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 70px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 5%;
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            border-bottom: 1px solid #eaeaea;
+        }
+        .logo a {
+            font-size: 1.2rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        nav ul li a {
+            font-size: 0.9rem;
+            letter-spacing: 0.05em;
+            color: #666;
+            transition: color 0.3s;
+        }
+        nav ul li a:hover, nav ul li a.active {
+            color: #000;
+        }
+
+        /* スクロール連動セクション全体 */
+        .about-container {
+            position: relative;
+            width: 100%;
+            height: 200vh; /* スクロール領域を確保 */
+            margin-top: 70px; /* ヘッダーの高さ分下げる */
+        }
+        .about-sticky {
+            position: sticky;
+            top: 70px;
+            width: 100vw;
+            height: calc(100vh - 70px);
+            overflow: hidden;
+            background-color: #fafafa;
+        }
+
+        /* 各スライド（メッセージ / 会社概要） */
+        .about-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.8s ease-in-out, visibility 0.8s ease-in-out;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 5%;
+        }
+        .about-slide.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* --- 1. 代表挨拶セクションのデザイン --- */
+        .message-content {
+            display: flex;
+            max-width: 1000px;
+            width: 100%;
+            align-items: center;
+            justify-content: space-between;
+            gap: 4rem;
+        }
+        .message-text {
+            flex: 1;
+        }
+        .message-text h2 {
+            font-size: 0.85rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: #888;
+            margin-bottom: 1rem;
+        }
+        .message-text p {
+            font-size: 1.15rem;
+            line-height: 2.2;
+            color: #222;
+            margin-bottom: 1.5rem;
+        }
+        .message-signature {
+            font-size: 0.95rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            color: #555;
+        }
+        .message-image {
+            flex: 0 0 400px;
+            height: 450px;
+            background-color: #ddd; /* 画像がない場合のプレースホルダー背景 */
+            overflow: hidden;
+        }
+        .message-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* --- 2. 会社概要セクションのデザイン --- */
+        .profile-content {
+            max-width: 900px;
+            width: 100%;
+            background: #fff;
+            padding: 40px 60px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            border: 1px solid #eaeaea;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+        .profile-content h2 {
+            font-size: 1.4rem;
+            letter-spacing: 0.1em;
+            margin-bottom: 2rem;
+            font-weight: 500;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 0.8rem;
+        }
+        .profile-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .profile-table th, .profile-table td {
+            padding: 14px 0;
+            text-align: left;
+            font-size: 0.95rem;
+            border-bottom: 1px solid #f2f2f2;
+        }
+        .profile-table th {
+            width: 30%;
+            color: #666;
+            font-weight: 400;
+            letter-spacing: 0.05em;
+        }
+        .profile-table td {
+            width: 70%;
+            color: #222;
+        }
+
+        /* スクロール誘導のヒント（オプション） */
+        .scroll-hint {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.75rem;
+            letter-spacing: 0.15em;
+            color: #888;
+            text-transform: uppercase;
+            animation: bounce 2s infinite;
+            z-index: 10;
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0) translateX(-50%);}
+            40% {transform: translateY(-6px) translateX(-50%);}
+            60% {transform: translateY(-3px) translateX(-50%);}
+        }
+
+        /* レスポンシブ対応（スマホ向け） */
+        @media (max-width: 900px) {
+            .about-container {
+                height: auto;
+            }
+            .about-sticky {
+                position: relative;
+                top: 0;
+                height: auto;
+                overflow: visible;
+            }
+            .about-slide {
+                position: relative;
+                opacity: 1;
+                visibility: visible;
+                height: auto;
+                padding: 60px 20px;
+            }
+            .message-content {
+                flex-direction: column-reverse;
+                gap: 2rem;
+            }
+            .message-image {
+                width: 100%;
+                height: 300px;
+            }
+            .profile-content {
+                padding: 20px;
+            }
+            .profile-table th, .profile-table td {
+                display: block;
+                width: 100%;
+                padding: 8px 0;
+            }
+            .profile-table th {
+                color: #888;
+                font-size: 0.85rem;
+            }
+            .scroll-hint {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ヘッダー / ナビゲーションバー -->
+    <header>
+        <div class="logo">
+            <a href="./index.html">Fukuda Architects</a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="./about.html" class="active">About</a></li>
+                <li><a href="./works.html">Works</a></li>
+                <li><a href="./contact.html">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- メインセクション（スクロール連動切り替え） -->
+    <div class="about-container" id="aboutContainer">
+        <div class="about-sticky">
+            
+            <!-- 1. 代表挨拶 -->
+            <div class="about-slide active" id="slideMessage">
+                <div class="message-content">
+                    <div class="message-text">
+                        <h2>Message</h2>
+                        <p>
+                            建築設計を通して、たくさんの様々な夢創りのお手伝いをさせて頂きました。<br>
+                            依頼主さまの想いに真摯に向き合い、関わるすべての人、そして環境そのものが豊かになる「三方良し」の精神を大切に、一つひとつの空間を丁寧に紡ぎ出しています。
+                        </p>
+                        <div class="message-signature">代表取締役社長 福田</div>
+                    </div>
+                    <div class="message-image">
+                        <!-- 代表者様の画像（images/president.jpg 等として配置してください） -->
+                        <img src="images/president.png" alt="代表取締役社長 福田">
+                    </div>
+                </div>
+                <div class="scroll-hint">Scroll down</div>
+            </div>
+
+            <!-- 2. 会社概要 -->
+            <div class="about-slide" id="slideProfile">
+                <div class="profile-content">
+                    <h2>Company Profile</h2>
+                    <table class="profile-table">
+                        <tr>
+                            <th>会社名</th>
+                            <td>株式会社 福田アーキテクツ</td>
+                        </tr>
+                        <tr>
+                            <th>本社所在地</th>
+                            <td>〒813-0044 福岡市東区千早4丁目24番1号</td>
+                        </tr>
+                        <tr>
+                            <th>設立</th>
+                            <td>2026年 株式会社 福田アーキテクツ創業、一級建築士事務所登録</td>
+                        </tr>
+                        <tr>
+                            <th>資本金</th>
+                            <td>1億円</td>
+                        </tr>
+                        <tr>
+                            <th>営業種目</th>
+                            <td>建築設計（意匠）</td>
+                        </tr>
+                        <tr>
+                            <th>事務所登録</th>
+                            <td>一級建築士事務所 技術専門校長登録 第1-101号</td>
+                        </tr>
+                        <tr>
+                            <th>有資格者数</th>
+                            <td>一級建築士 1名</td>
+                        </tr>
+                        <tr>
+                            <th>従業員数</th>
+                            <td>1名</td>
+                        </tr>
+                        <tr>
+                            <th>主要取引銀行</th>
+                            <td>日本銀行、アジア開発銀行</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- スクリプト：PC表示時にスクロールでスライドを切り替える -->
+    <script>
+        const container = document.getElementById('aboutContainer');
+        const slideMessage = document.getElementById('slideMessage');
+        const slideProfile = document.getElementById('slideProfile');
+
+        window.addEventListener('scroll', () => {
+            // スマホ（画面幅900px以下）のときはスクロール切り替えを無効化（通常の縦並びにする）
+            if (window.innerWidth <= 900) return;
+
+            const rect = container.getBoundingClientRect();
+            const containerHeight = container.offsetHeight;
+            const windowHeight = window.innerHeight;
+
+            // コンテナ内でのスクロール進行度 (0.0 〜 1.0)
+            let scrollProgress = -rect.top / (containerHeight - windowHeight);
+
+            if (scrollProgress >= 0.5) {
+                slideMessage.classList.remove('active');
+                slideProfile.classList.add('active');
+            } else {
+                slideMessage.classList.add('active');
+                slideProfile.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>
